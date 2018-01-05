@@ -13,6 +13,7 @@ import com.mkath.cursomc.domain.Cidade;
 import com.mkath.cursomc.domain.Cliente;
 import com.mkath.cursomc.domain.Endereco;
 import com.mkath.cursomc.domain.Estado;
+import com.mkath.cursomc.domain.ItemPedido;
 import com.mkath.cursomc.domain.Pagamento;
 import com.mkath.cursomc.domain.PagamentoComBoleto;
 import com.mkath.cursomc.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.mkath.cursomc.repositories.CidadeRespository;
 import com.mkath.cursomc.repositories.ClienteRepository;
 import com.mkath.cursomc.repositories.EnderecoRepository;
 import com.mkath.cursomc.repositories.EstadoRepository;
+import com.mkath.cursomc.repositories.ItemPedidoRepository;
 import com.mkath.cursomc.repositories.PagamentoRepository;
 import com.mkath.cursomc.repositories.PedidoRepository;
 import com.mkath.cursomc.repositories.ProdutoRepository;
@@ -55,6 +57,9 @@ public class CursomcApplication implements CommandLineRunner{
 	
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursomcApplication.class, args);
@@ -116,5 +121,18 @@ public class CursomcApplication implements CommandLineRunner{
 		
 		pedidoRepository.save(Arrays.asList(ped1, ped2));
 		pagamentoRepository.save(Arrays.asList(pagto1, pagto2));
+		
+		ItemPedido item1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido item2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido item3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(item1, item2));
+		ped2.getItens().addAll(Arrays.asList(item3));
+		
+		p1.getItens().addAll(Arrays.asList(item1));
+		p2.getItens().addAll(Arrays.asList(item3));
+		p3.getItens().addAll(Arrays.asList(item2));
+		
+		itemPedidoRepository.save(Arrays.asList(item1, item2, item3));
 	}
 }
