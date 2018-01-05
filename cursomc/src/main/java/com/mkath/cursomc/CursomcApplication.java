@@ -1,6 +1,7 @@
 package com.mkath.cursomc;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,13 +13,20 @@ import com.mkath.cursomc.domain.Cidade;
 import com.mkath.cursomc.domain.Cliente;
 import com.mkath.cursomc.domain.Endereco;
 import com.mkath.cursomc.domain.Estado;
+import com.mkath.cursomc.domain.Pagamento;
+import com.mkath.cursomc.domain.PagamentoComBoleto;
+import com.mkath.cursomc.domain.PagamentoComCartao;
+import com.mkath.cursomc.domain.Pedido;
 import com.mkath.cursomc.domain.Produto;
+import com.mkath.cursomc.domain.enums.EstadoPagamento;
 import com.mkath.cursomc.domain.enums.TipoCliente;
 import com.mkath.cursomc.repositories.CategoriaRepository;
 import com.mkath.cursomc.repositories.CidadeRespository;
 import com.mkath.cursomc.repositories.ClienteRepository;
 import com.mkath.cursomc.repositories.EnderecoRepository;
 import com.mkath.cursomc.repositories.EstadoRepository;
+import com.mkath.cursomc.repositories.PagamentoRepository;
+import com.mkath.cursomc.repositories.PedidoRepository;
 import com.mkath.cursomc.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -41,6 +49,12 @@ public class CursomcApplication implements CommandLineRunner{
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursomcApplication.class, args);
@@ -88,5 +102,19 @@ public class CursomcApplication implements CommandLineRunner{
 		
 		clienteRepository.save(Arrays.asList(cli1));
 		enderecoRepository.save(Arrays.asList(e1, e2));
+		
+		Pedido ped1 = new Pedido(null, new Date(), cli1, e1);
+		Pedido ped2 = new Pedido(null, new Date(), cli1, e2);
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, new Date(), null);
+		ped2.setPagamento(pagto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
+		pedidoRepository.save(Arrays.asList(ped1, ped2));
+		pagamentoRepository.save(Arrays.asList(pagto1, pagto2));
 	}
 }
