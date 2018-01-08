@@ -1,6 +1,5 @@
 package com.mkath.cursomc.resources;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
