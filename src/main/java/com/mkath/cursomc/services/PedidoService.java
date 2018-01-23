@@ -9,6 +9,7 @@ import com.mkath.cursomc.domain.ItemPedido;
 import com.mkath.cursomc.domain.PagamentoComBoleto;
 import com.mkath.cursomc.domain.Pedido;
 import com.mkath.cursomc.domain.enums.EstadoPagamento;
+import com.mkath.cursomc.repositories.ClienteRepository;
 import com.mkath.cursomc.repositories.ItemPedidoRepository;
 import com.mkath.cursomc.repositories.PagamentoRepository;
 import com.mkath.cursomc.repositories.PedidoRepository;
@@ -33,17 +34,22 @@ public class PedidoService {
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
 	public Pedido buscar(Integer id) {
 		Pedido obj = repository.findOne(id);
 		if	(obj == null) {
 			throw new ObjectNotFoundException("Pedido não encontrado! id: "+ id);
 		}
+		System.out.println(obj);
 		return obj;
 	}
 
 	public Pedido insert(Pedido pedido) {
 		pedido.setId(null);
 		pedido.setInstante(new Date());
+		pedido.setCliente(clienteRepository.findOne(pedido.getCliente().getId()));
 		pedido.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		pedido.getPagamento().setPedido(pedido);
 		
@@ -56,7 +62,8 @@ public class PedidoService {
 		
 		for	(ItemPedido ip: pedido.getItens()) {
 			ip.setDesconto(0.0);
-			ip.setPreco(produtoRepository.findOne(ip.getProduto().getId()).getPreco());
+			ip.setProduto(produtoRepository.findOne(ip.getProduto().getId()));
+			ip.setPreco(ip.getProduto().getPreco());
 			ip.setPedido(pedido);
 		}
 		itemPedidoRepository.save(pedido.getItens());
