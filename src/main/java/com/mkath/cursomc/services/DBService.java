@@ -19,6 +19,7 @@ import com.mkath.cursomc.domain.PagamentoComCartao;
 import com.mkath.cursomc.domain.Pedido;
 import com.mkath.cursomc.domain.Produto;
 import com.mkath.cursomc.domain.enums.EstadoPagamento;
+import com.mkath.cursomc.domain.enums.Perfil;
 import com.mkath.cursomc.domain.enums.TipoCliente;
 import com.mkath.cursomc.repositories.CategoriaRepository;
 import com.mkath.cursomc.repositories.CidadeRespository;
@@ -123,13 +124,19 @@ public class DBService {
 		Cliente cli1 = new Cliente(null, "Maria Silva", "marcelokathmk@gmail.com", "9946561316", TipoCliente.PESSOA_FISICA, peEncoder.encode("1234567"));
 		cli1.getTelefones().addAll(Arrays.asList("33383194", "84383380"));
 		
+		Cliente cli2 = new Cliente(null, "Ana Costa", "marcelokath@yahoo.com.br", "9946561316", TipoCliente.PESSOA_FISICA, peEncoder.encode("98765464"));
+		cli2.addPerfil(Perfil.ADMIN);
+		cli1.getTelefones().addAll(Arrays.asList("33383194", "84383380"));
+		
 		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 203", "Jardim", "38220834", cli1, cid1);
 		Endereco e2 = new Endereco(null, "Rua Flores", "105", "Sala 800", "Centro", "38777012", cli1, cid2);
+		Endereco e3 = new Endereco(null, "Avenida Floriano", "2006", null, "Centro", "97898464", cli2, cid2);
 		
 		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 		
-		clienteRepository.save(Arrays.asList(cli1));
-		enderecoRepository.save(Arrays.asList(e1, e2));
+		clienteRepository.save(Arrays.asList(cli1, cli2));
+		enderecoRepository.save(Arrays.asList(e1, e2, e3));
 		
 		Pedido ped1 = new Pedido(null, new Date(), cli1, e1);
 		Pedido ped2 = new Pedido(null, new Date(), cli1, e2);
