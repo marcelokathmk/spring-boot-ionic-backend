@@ -3,8 +3,13 @@ package com.mkath.cursomc.services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.mkath.cursomc.domain.Categoria;
+import com.mkath.cursomc.domain.Cliente;
 import com.mkath.cursomc.domain.ItemPedido;
 import com.mkath.cursomc.domain.PagamentoComBoleto;
 import com.mkath.cursomc.domain.Pedido;
@@ -14,6 +19,8 @@ import com.mkath.cursomc.repositories.ItemPedidoRepository;
 import com.mkath.cursomc.repositories.PagamentoRepository;
 import com.mkath.cursomc.repositories.PedidoRepository;
 import com.mkath.cursomc.repositories.ProdutoRepository;
+import com.mkath.cursomc.security.UserSS;
+import com.mkath.cursomc.services.exception.AuthorizationException;
 import com.mkath.cursomc.services.exception.ObjectNotFoundException;
 
 @Service
@@ -72,5 +79,15 @@ public class PedidoService {
 		itemPedidoRepository.save(pedido.getItens());
 		emailService.sendOrderConfirmationEmail(pedido);
 		return pedido;
+	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+		UserSS user = UserService.getUserAuthenticated();
+		if	(user == null) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteRepository.findOne(user.getId());
+		return repository.findByCliente(cliente, pageRequest);
 	}
 }
