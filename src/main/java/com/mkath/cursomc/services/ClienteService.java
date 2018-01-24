@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 import com.mkath.cursomc.domain.Cidade;
 import com.mkath.cursomc.domain.Cliente;
 import com.mkath.cursomc.domain.Endereco;
+import com.mkath.cursomc.domain.enums.Perfil;
 import com.mkath.cursomc.domain.enums.TipoCliente;
 import com.mkath.cursomc.dto.ClienteDTO;
 import com.mkath.cursomc.dto.ClienteNewDTO;
 import com.mkath.cursomc.repositories.CidadeRespository;
 import com.mkath.cursomc.repositories.ClienteRepository;
 import com.mkath.cursomc.repositories.EnderecoRepository;
+import com.mkath.cursomc.security.UserSS;
+import com.mkath.cursomc.services.exception.AuthorizationException;
 import com.mkath.cursomc.services.exception.DataIntegretyException;
 import com.mkath.cursomc.services.exception.ObjectNotFoundException;
 
@@ -38,6 +41,10 @@ public class ClienteService {
 	private BCryptPasswordEncoder pEncoder;
 	
 	public Cliente find(Integer id) {
+		UserSS user = UserService.getUserAuthenticated();
+		if	(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso Negado!");
+		}
 		Cliente obj = repository.findOne(id);
 		if	(obj == null) {
 			throw new ObjectNotFoundException("Cliente não encontrado! id: "+ id);
