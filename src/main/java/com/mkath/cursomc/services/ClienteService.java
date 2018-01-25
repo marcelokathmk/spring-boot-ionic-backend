@@ -1,14 +1,17 @@
 package com.mkath.cursomc.services;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mkath.cursomc.domain.Cidade;
 import com.mkath.cursomc.domain.Cliente;
@@ -39,6 +42,9 @@ public class ClienteService {
 	
 	@Autowired
 	private BCryptPasswordEncoder pEncoder;
+	
+	@Autowired
+	private S3Service s3Service;
 	
 	public Cliente find(Integer id) {
 		UserSS user = UserService.getUserAuthenticated();
@@ -106,5 +112,9 @@ public class ClienteService {
 		obj = repository.save(obj);
 		enderecoRepository.save(obj.getEnderecos());
 		return obj;
+	}
+	
+	public URI uploadProfilePicture(MultipartFile multi) {
+		return s3Service.uploadFile(multi); 
 	}
 }
