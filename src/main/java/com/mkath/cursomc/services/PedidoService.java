@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.mkath.cursomc.domain.Categoria;
 import com.mkath.cursomc.domain.Cliente;
 import com.mkath.cursomc.domain.ItemPedido;
 import com.mkath.cursomc.domain.PagamentoComBoleto;
