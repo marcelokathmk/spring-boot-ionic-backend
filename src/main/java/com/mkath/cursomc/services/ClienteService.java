@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -115,6 +114,15 @@ public class ClienteService {
 	}
 	
 	public URI uploadProfilePicture(MultipartFile multi) {
-		return s3Service.uploadFile(multi); 
+		UserSS user = UserService.getUserAuthenticated();
+		if	(user == null) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		
+		URI uri = s3Service.uploadFile(multi);
+		Cliente cli = repository.findOne(user.getId());
+		cli.setImageURL(uri.toString());
+		repository.save(cli);
+		return uri; 
 	}
 }
