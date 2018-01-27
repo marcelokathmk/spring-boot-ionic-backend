@@ -92,7 +92,7 @@ public class ClienteService {
 	
 	public Cliente findByEmail(String email) {
 		UserSS user = UserService.getUserAuthenticated();
-		if	(user == null ||!user.hasRole(Perfil.ADMIN) && !email.equals(user.getUsername())) {
+		if	(user == null || !user.hasRole(Perfil.ADMIN) || !email.equals(user.getUsername())) {
 			throw new AuthorizationException("Acesso negado");
 		}
 		
