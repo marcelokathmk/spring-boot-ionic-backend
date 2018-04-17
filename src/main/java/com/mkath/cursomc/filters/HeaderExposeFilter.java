@@ -23,7 +23,7 @@ public class HeaderExposeFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletResponse resp = (HttpServletResponse) response;
-		resp.addHeader("access-control-expose-controls", "location");
+		resp.addHeader("access-control-expose-headers", "location");
 		chain.doFilter(request, response);
 	}
 
